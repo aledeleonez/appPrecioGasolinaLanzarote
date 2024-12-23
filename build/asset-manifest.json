@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/appPrecioGasolinaLanzarote/static/css/main.bc1c9e22.css",
+    "main.js": "/appPrecioGasolinaLanzarote/static/js/main.d953a876.js",
+    "index.html": "/appPrecioGasolinaLanzarote/index.html",
+    "main.bc1c9e22.css.map": "/appPrecioGasolinaLanzarote/static/css/main.bc1c9e22.css.map",
+    "main.d953a876.js.map": "/appPrecioGasolinaLanzarote/static/js/main.d953a876.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.bc1c9e22.css",
+    "static/js/main.d953a876.js"
+  ]
+}
