@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { HashRouter, Link, Route, Routes } from 'react-router'
+import { BrowserRouter, Link, Route, Routes } from 'react-router'
 import EstadoCarga from './components/EstadoCarga'
 import Fecha from './components/Fecha'
 import ListaPrecios from './components/ListaPrecios'
@@ -7,10 +7,10 @@ import ListaPrecios from './components/ListaPrecios'
 // MapLibre pesa bastante, así que solo se descarga al abrir el mapa
 const GasStationMap = lazy(() => import('./components/GasStationMap'))
 
-// HashRouter porque GitHub Pages no sabe redirigir rutas como /mapa a index.html
+// Las páginas mapa.html, etc. que genera vite.config.ts hacen que /mapa funcione en GitHub Pages
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <nav
         className='navbar navbar-expand-lg navbar-dark bg-dark'
         style={{ fontWeight: 'bold', color: 'white' }}
@@ -75,7 +75,7 @@ function App() {
         </Routes>
       </div>
       <Fecha />
-    </HashRouter>
+    </BrowserRouter>
   )
 }
 
