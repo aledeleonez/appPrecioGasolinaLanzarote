@@ -1,6 +1,6 @@
 type Props = {
-  error: Error | null
-  onReintentar: () => void
+  error?: Error | null
+  onReintentar?: () => void
 }
 
 // Lo que se muestra mientras llegan los datos o si no se pueden cargar

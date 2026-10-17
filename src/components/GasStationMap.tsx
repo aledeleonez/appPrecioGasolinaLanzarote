@@ -1,58 +1,201 @@
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
-import L from 'leaflet'
+import { useMemo, useRef, useState } from 'react'
+import { setWorkerUrl, type Map as MapaMapLibre } from 'maplibre-gl'
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import MapGL, {
+  GeolocateControl,
+  Marker,
+  NavigationControl,
+  Popup,
+  type MapRef,
+} from 'react-map-gl/maplibre'
+import Supercluster from 'supercluster'
 import { useGasolineras } from '../hooks/useGasolineras'
+import { NOMBRES_CARBURANTE, type Carburante, type Gasolinera } from '../tipos'
+import { marcaDe, type Marca } from '../utils/marcas'
+import { formatearPrecio, precioMinimo } from '../utils/precios'
 import EstadoCarga from './EstadoCarga'
+import './GasStationMap.css'
 
-function crearIcono(url: string) {
-  return new L.Icon({
-    iconUrl: url,
-    iconSize: [25, 25],
-    // Centro inferior del icono, para que apunte a la posición exacta
-    iconAnchor: [12, 25],
-    popupAnchor: [1, -25],
-  })
+// Mapa vectorial gratuito y sin clave de API, con datos de OpenStreetMap
+const ESTILO_MAPA = 'https://tiles.openfreemap.org/styles/liberty'
+
+// Lanzarote completa, de Playa Blanca a Órzola (longitud, latitud)
+const LIMITES_LANZAROTE: [[number, number], [number, number]] = [
+  [-13.88, 28.84],
+  [-13.42, 29.24],
+]
+
+const CARBURANTES = Object.keys(NOMBRES_CARBURANTE) as Carburante[]
+
+// MapLibre busca su worker junto a su propio archivo, pero Vite lo empaqueta
+// todo junto; así se copia aparte y le decimos dónde está.
+setWorkerUrl(workerUrl)
+
+type Vista = {
+  limites: [number, number, number, number]
+  zoom: number
 }
 
-const iconos = {
-  cepsa: crearIcono('https://i.pinimg.com/originals/df/4d/68/df4d68441778462a69557cdf2d48c55b.jpg'),
-  disa: crearIcono('https://www.disagrupo.es/assets/img/historia/29.png'),
-  otra: crearIcono('https://cdn-icons-png.flaticon.com/512/234/234789.png'),
+function vistaDe(mapa: MapaMapLibre): Vista {
+  const b = mapa.getBounds()
+  return { limites: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], zoom: mapa.getZoom() }
 }
 
-// El rótulo suele llevar la marca más el nombre de la estación ("DISA COSTA TEGUISE")
-function iconoPara(rotulo: string) {
-  const marca = rotulo.toUpperCase()
-  if (marca.includes('CEPSA')) return iconos.cepsa
-  if (marca.includes('DISA')) return iconos.disa
-  return iconos.otra
+function LogoMarca({ marca }: { marca: Marca }) {
+  if (marca.logo) {
+    return <img src={`${import.meta.env.BASE_URL}logos/${marca.logo}`} alt='' />
+  }
+  return <span className='marcador-iniciales'>{marca.iniciales}</span>
+}
+
+type TarjetaProps = {
+  gasolinera: Gasolinera
+  minimos: Record<Carburante, number | null>
+}
+
+function TarjetaGasolinera({ gasolinera, minimos }: TarjetaProps) {
+  const esLaMasBarata = (c: Carburante) =>
+    gasolinera.precios[c] !== null && gasolinera.precios[c] === minimos[c]
+
+  return (
+    <div className='tarjeta-mapa'>
+      <div className='tarjeta-mapa-cabecera'>
+        <div className='marcador marcador-pequeno'>
+          <LogoMarca marca={marcaDe(gasolinera.rotulo)} />
+        </div>
+        <div>
+          <h6 className='mb-0'>{gasolinera.rotulo}</h6>
+          <small className='text-muted'>
+            {gasolinera.direccion}, {gasolinera.localidad}
+          </small>
+        </div>
+      </div>
+      <ul className='list-unstyled mb-0'>
+        {CARBURANTES.map((c) => (
+          <li key={c} className='tarjeta-mapa-precio'>
+            <span>{NOMBRES_CARBURANTE[c]}</span>
+            <span
+              className={
+                gasolinera.precios[c] === null
+                  ? 'text-muted'
+                  : esLaMasBarata(c)
+                    ? 'fw-bold text-success'
+                    : 'fw-bold'
+              }
+            >
+              {formatearPrecio(gasolinera.precios[c])}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {CARBURANTES.some(esLaMasBarata) && (
+        <small className='d-block mt-2 text-success'>En verde, el precio más barato de la isla</small>
+      )}
+    </div>
+  )
 }
 
 // Componente que renderiza el mapa
 const GasStationMap = () => {
   const { data, error, refetch } = useGasolineras()
+  const mapaRef = useRef<MapRef>(null)
+  const [vista, setVista] = useState<Vista | null>(null)
+  const [seleccionada, setSeleccionada] = useState<Gasolinera | null>(null)
+
+  const minimos = useMemo(() => {
+    const gasolineras = data?.gasolineras ?? []
+    return Object.fromEntries(
+      CARBURANTES.map((c) => [c, precioMinimo(gasolineras, c)]),
+    ) as Record<Carburante, number | null>
+  }, [data])
+
+  // Agrupa las gasolineras cercanas para que no se amontonen al alejar el mapa (Arrecife)
+  const indice = useMemo(() => {
+    const supercluster = new Supercluster<Gasolinera>({ radius: 40, maxZoom: 15 })
+    supercluster.load(
+      (data?.gasolineras ?? []).map((g) => ({
+        type: 'Feature' as const,
+        properties: g,
+        geometry: { type: 'Point' as const, coordinates: [g.longitud, g.latitud] },
+      })),
+    )
+    return supercluster
+  }, [data])
+
+  const puntos = vista ? indice.getClusters(vista.limites, Math.floor(vista.zoom)) : []
 
   if (!data) return <EstadoCarga error={error} onReintentar={() => refetch()} />
 
   return (
-    <MapContainer
-      center={[28.953055, -13.592706]}
-      zoom={13}
-      style={{ height: '100vh', width: '100%' }}
+    <MapGL
+      ref={mapaRef}
+      initialViewState={{ bounds: LIMITES_LANZAROTE, fitBoundsOptions: { padding: 24 } }}
+      mapStyle={ESTILO_MAPA}
+      style={{ width: '100%', height: 'calc(100vh - 66px)' }}
+      onLoad={(e) => setVista(vistaDe(e.target))}
+      onMove={(e) => setVista(vistaDe(e.target))}
     >
-      <TileLayer
-        url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {data.gasolineras.map((item) => (
-        <Marker key={item.id} position={[item.latitud, item.longitud]} icon={iconoPara(item.rotulo)}>
-          <Popup>
-            <div>
-              <p>Hola</p>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
+      <NavigationControl position='top-right' />
+      <GeolocateControl position='top-right' />
+      {puntos.map((punto) => {
+        const [longitud, latitud] = punto.geometry.coordinates
+        if ('cluster' in punto.properties) {
+          const { cluster_id: idGrupo, point_count: total } = punto.properties
+          return (
+            <Marker key={`grupo-${idGrupo}`} longitude={longitud} latitude={latitud}>
+              <button
+                type='button'
+                className='marcador marcador-grupo'
+                aria-label={`${total} gasolineras, acercar`}
+                onClick={() =>
+                  mapaRef.current?.easeTo({
+                    center: [longitud, latitud],
+                    zoom: indice.getClusterExpansionZoom(idGrupo),
+                  })
+                }
+              >
+                {total}
+              </button>
+            </Marker>
+          )
+        }
+        const item = punto.properties
+        return (
+          <Marker
+            key={item.id}
+            longitude={longitud}
+            latitude={latitud}
+            onClick={(e) => {
+              // Sin esto, el clic llega al mapa y cierra el popup recién abierto
+              e.originalEvent.stopPropagation()
+              setSeleccionada(item)
+            }}
+          >
+            <button
+              type='button'
+              className={`marcador ${seleccionada?.id === item.id ? 'marcador-activo' : ''}`}
+              aria-label={`${item.rotulo}, ${item.direccion}`}
+              title={item.rotulo}
+            >
+              <LogoMarca marca={marcaDe(item.rotulo)} />
+            </button>
+          </Marker>
+        )
+      })}
+      {seleccionada && (
+        <Popup
+          longitude={seleccionada.longitud}
+          latitude={seleccionada.latitud}
+          anchor='bottom'
+          offset={24}
+          maxWidth='300px'
+          onClose={() => setSeleccionada(null)}
+        >
+          <TarjetaGasolinera gasolinera={seleccionada} minimos={minimos} />
+        </Popup>
+      )}
+    </MapGL>
   )
 }
 
