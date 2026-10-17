@@ -40,7 +40,7 @@ function App() {
             path='/'
             element={
               <div className='container-md'>
-                <ListaPrecios carburante='Precio Gasolina 95 E5' />
+                <ListaPrecios carburante='gasolina95' />
               </div>
             }
           />
@@ -48,7 +48,7 @@ function App() {
             path='/gasoleo'
             element={
               <div className='container-md'>
-                <ListaPrecios carburante='Precio Gasoleo A' />
+                <ListaPrecios carburante='gasoleo' />
               </div>
             }
           />
@@ -56,7 +56,7 @@ function App() {
             path='/gasolina98'
             element={
               <div className='container-md'>
-                <ListaPrecios carburante='Precio Gasolina 98 E5' />
+                <ListaPrecios carburante='gasolina98' />
               </div>
             }
           />

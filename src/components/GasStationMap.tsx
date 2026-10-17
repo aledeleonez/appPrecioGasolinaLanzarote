@@ -1,7 +1,6 @@
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
 import { useGasolineras } from '../hooks/useGasolineras'
-import { parseDecimal } from '../utils/precios'
 import EstadoCarga from './EstadoCarga'
 
 function crearIcono(url: string) {
@@ -44,20 +43,15 @@ const GasStationMap = () => {
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {data.gasolineras.map((item) => {
-        const latitud = parseDecimal(item.Latitud)
-        const longitud = parseDecimal(item['Longitud (WGS84)'])
-        if (latitud === null || longitud === null) return null
-        return (
-          <Marker key={item.IDEESS} position={[latitud, longitud]} icon={iconoPara(item['Rótulo'])}>
-            <Popup>
-              <div>
-                <p>Hola</p>
-              </div>
-            </Popup>
-          </Marker>
-        )
-      })}
+      {data.gasolineras.map((item) => (
+        <Marker key={item.id} position={[item.latitud, item.longitud]} icon={iconoPara(item.rotulo)}>
+          <Popup>
+            <div>
+              <p>Hola</p>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
     </MapContainer>
   )
 }

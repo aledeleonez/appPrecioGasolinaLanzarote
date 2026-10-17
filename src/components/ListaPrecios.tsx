@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { NOMBRES_CARBURANTE, type Carburante } from '../api/gasolineras'
 import { useGasolineras } from '../hooks/useGasolineras'
-import { ordenarPorPrecio, parseDecimal, precioMinimo } from '../utils/precios'
+import { NOMBRES_CARBURANTE, type Carburante } from '../tipos'
+import { formatearPrecio, ordenarPorPrecio, precioMinimo } from '../utils/precios'
 import EstadoCarga from './EstadoCarga'
 
 const CARBURANTES = Object.keys(NOMBRES_CARBURANTE) as Carburante[]
@@ -28,24 +28,24 @@ function ListaPrecios({ carburante }: Props) {
   return (
     <div className='row d-flex flex-row'>
       {gasolineras.map((item) => {
-        const esLaMasBarata = minimo !== null && parseDecimal(item[carburante]) === minimo
+        const esLaMasBarata = minimo !== null && item.precios[carburante] === minimo
         return (
-          <div key={item.IDEESS} className='col p-2'>
+          <div key={item.id} className='col p-2'>
             <div className='card border-secondary mt-2' style={{ width: '300px', height: '320px' }}>
               <div className='card-body text-center'>
-                <h6 className='card-title'>{item['Rótulo']}</h6>
+                <h6 className='card-title'>{item.rotulo}</h6>
                 <h6 className='mb-2 text-muted' style={{ fontSize: '14px' }}>
-                  {item.Horario}
+                  {item.horario}
                 </h6>
                 <hr />
-                <p>{item.Localidad}</p>
-                <p style={{ fontSize: '14px' }}>{item['Dirección']}</p>
+                <p>{item.localidad}</p>
+                <p style={{ fontSize: '14px' }}>{item.direccion}</p>
                 <p className={`fw-bold ${esLaMasBarata ? 'text-success' : ''}`}>
-                  {NOMBRES_CARBURANTE[carburante]}: {item[carburante]} €
+                  {NOMBRES_CARBURANTE[carburante]}: {formatearPrecio(item.precios[carburante])}
                 </p>
                 {otros.map((c) => (
                   <p key={c}>
-                    {NOMBRES_CARBURANTE[c]}: {item[c]} €
+                    {NOMBRES_CARBURANTE[c]}: {formatearPrecio(item.precios[c])}
                   </p>
                 ))}
               </div>
