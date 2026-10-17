@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Gasolinera } from '../tipos'
-import { formatearPrecio, ordenarPorPrecio, precioMinimo } from './precios'
+import { formatearDiferencia, formatearPrecio, ordenarPorPrecio, precioMinimo } from './precios'
 
 function gasolinera(id: string, precio98: number | null): Gasolinera {
   return {
@@ -8,6 +8,7 @@ function gasolinera(id: string, precio98: number | null): Gasolinera {
     rotulo: 'TEST',
     horario: '',
     localidad: '',
+    municipio: '',
     direccion: '',
     latitud: 29,
     longitud: -13.6,
@@ -53,5 +54,18 @@ describe('formatearPrecio', () => {
 
   it('indica cuando no hay precio', () => {
     expect(formatearPrecio(null)).toBe('No disponible')
+  })
+})
+
+describe('formatearDiferencia', () => {
+  it('muestra lo que cuesta de más respecto a la más barata', () => {
+    expect(formatearDiferencia(1.499, 1.477)).toBe('+0,022 €')
+    expect(formatearDiferencia(1.6, 1.5)).toBe('+0,100 €')
+  })
+
+  it('no muestra nada si es la más barata o no hay precio', () => {
+    expect(formatearDiferencia(1.477, 1.477)).toBeNull()
+    expect(formatearDiferencia(null, 1.477)).toBeNull()
+    expect(formatearDiferencia(1.5, null)).toBeNull()
   })
 })

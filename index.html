@@ -3,12 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#212529" />
+    <meta name="theme-color" content="#f5f5f7" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Aplica el tema antes de pintar la página para que no haya un destello en blanco.
+      // La misma lógica está en src/hooks/useTema.ts
+      ;(function () {
+        var guardado = null
+        try {
+          guardado = localStorage.getItem('tema')
+        } catch (e) {}
+        var oscuro = guardado
+          ? guardado === 'oscuro'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches
+        document.documentElement.setAttribute('data-bs-theme', oscuro ? 'dark' : 'light')
+        if (oscuro) document.querySelector('meta[name="theme-color"]').setAttribute('content', '#000000')
+      })()
+    </script>
     <meta
       name="description"
       content="Precios actualizados de la gasolina y el gasóleo en las gasolineras de Lanzarote"
     />
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2933/2933939.png" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <title>Precio de la Gasolina en Lanzarote</title>
   </head>
   <body>

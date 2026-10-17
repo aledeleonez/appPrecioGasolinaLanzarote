@@ -14,13 +14,6 @@
   transition: transform 150ms ease-out;
 }
 
-.marcador img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 50%;
-}
-
 .marcador:hover,
 .marcador:focus-visible,
 .marcador-activo {
@@ -28,7 +21,7 @@
 }
 
 .marcador-activo {
-  border-color: var(--bs-success);
+  border-color: var(--verde);
 }
 
 .marcador-grupo {
@@ -37,21 +30,7 @@
   font-size: 15px;
   font-weight: 700;
   color: white;
-  background: var(--bs-success);
-}
-
-.marcador-iniciales {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  color: white;
-  background: var(--bs-dark);
-  border-radius: 50%;
+  background: #198754;
 }
 
 .marcador-pequeno {
@@ -63,7 +42,40 @@
 
 .maplibregl-popup-content {
   padding: 12px 14px;
+  color: var(--texto);
+  background: var(--superficie);
   border-radius: 10px;
+}
+
+/* Popup y botones del mapa en modo oscuro */
+[data-bs-theme='dark'] .maplibregl-popup-tip {
+  border-top-color: var(--superficie);
+  border-bottom-color: var(--superficie);
+}
+
+[data-bs-theme='dark'] .maplibregl-popup-close-button {
+  color: var(--texto);
+}
+
+[data-bs-theme='dark'] .maplibregl-ctrl-group {
+  background: var(--superficie);
+}
+
+[data-bs-theme='dark'] .maplibregl-ctrl-group button + button {
+  border-top-color: var(--separador);
+}
+
+[data-bs-theme='dark'] .maplibregl-ctrl button .maplibregl-ctrl-icon {
+  filter: invert(1);
+}
+
+[data-bs-theme='dark'] .maplibregl-ctrl-attrib {
+  color: var(--texto-secundario);
+  background: rgb(28 28 30 / 0.8);
+}
+
+[data-bs-theme='dark'] .maplibregl-ctrl-attrib a {
+  color: var(--texto);
 }
 
 .tarjeta-mapa {
@@ -78,7 +90,7 @@
   padding-right: 12px;
   padding-bottom: 8px;
   margin-bottom: 8px;
-  border-bottom: 1px solid var(--bs-border-color);
+  border-bottom: 1px solid var(--separador);
 }
 
 .tarjeta-mapa-precio {

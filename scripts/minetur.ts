@@ -22,6 +22,7 @@ export type EstacionApi = {
   'Rótulo': string
   Horario: string
   Localidad: string
+  Municipio: string
   'Dirección': string
   Latitud: string
   'Longitud (WGS84)': string
@@ -52,6 +53,7 @@ export function normalizarEstacion(estacion: EstacionApi): Gasolinera | null {
     rotulo: estacion['Rótulo'],
     horario: estacion.Horario,
     localidad: estacion.Localidad,
+    municipio: estacion.Municipio,
     direccion: estacion['Dirección'],
     latitud,
     longitud,

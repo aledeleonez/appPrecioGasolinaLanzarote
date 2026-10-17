@@ -9,16 +9,21 @@ import MapGL, {
   Popup,
   type MapRef,
 } from 'react-map-gl/maplibre'
+import { useSearchParams } from 'react-router'
 import Supercluster from 'supercluster'
 import { useGasolineras } from '../hooks/useGasolineras'
+import { useTema } from '../hooks/useTema'
 import { NOMBRES_CARBURANTE, type Carburante, type Gasolinera } from '../tipos'
-import { marcaDe, type Marca } from '../utils/marcas'
 import { formatearPrecio, precioMinimo } from '../utils/precios'
 import EstadoCarga from './EstadoCarga'
+import LogoMarca from './LogoMarca'
 import './GasStationMap.css'
 
-// Mapa vectorial gratuito y sin clave de API, con datos de OpenStreetMap
-const ESTILO_MAPA = 'https://tiles.openfreemap.org/styles/liberty'
+// Mapas vectoriales gratuitos y sin clave de API, con datos de OpenStreetMap
+const ESTILOS_MAPA = {
+  claro: 'https://tiles.openfreemap.org/styles/liberty',
+  oscuro: 'https://tiles.openfreemap.org/styles/dark',
+}
 
 // Lanzarote completa, de Playa Blanca a Órzola (longitud, latitud)
 const LIMITES_LANZAROTE: [[number, number], [number, number]] = [
@@ -42,13 +47,6 @@ function vistaDe(mapa: MapaMapLibre): Vista {
   return { limites: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], zoom: mapa.getZoom() }
 }
 
-function LogoMarca({ marca }: { marca: Marca }) {
-  if (marca.logo) {
-    return <img src={`${import.meta.env.BASE_URL}logos/${marca.logo}`} alt='' />
-  }
-  return <span className='marcador-iniciales'>{marca.iniciales}</span>
-}
-
 type TarjetaProps = {
   gasolinera: Gasolinera
   minimos: Record<Carburante, number | null>
@@ -62,7 +60,7 @@ function TarjetaGasolinera({ gasolinera, minimos }: TarjetaProps) {
     <div className='tarjeta-mapa'>
       <div className='tarjeta-mapa-cabecera'>
         <div className='marcador marcador-pequeno'>
-          <LogoMarca marca={marcaDe(gasolinera.rotulo)} />
+          <LogoMarca rotulo={gasolinera.rotulo} />
         </div>
         <div>
           <h6 className='mb-0'>{gasolinera.rotulo}</h6>
@@ -99,9 +97,13 @@ function TarjetaGasolinera({ gasolinera, minimos }: TarjetaProps) {
 // Componente que renderiza el mapa
 const GasStationMap = () => {
   const { data, error, refetch } = useGasolineras()
+  const tema = useTema()
   const mapaRef = useRef<MapRef>(null)
   const [vista, setVista] = useState<Vista | null>(null)
-  const [seleccionada, setSeleccionada] = useState<Gasolinera | null>(null)
+  // La lista enlaza a /mapa?gasolinera=<id> para abrir el mapa centrado en esa gasolinera
+  const [parametros] = useSearchParams()
+  const [idSeleccionada, setIdSeleccionada] = useState(parametros.get('gasolinera'))
+  const seleccionada = data?.gasolineras.find((g) => g.id === idSeleccionada) ?? null
 
   const minimos = useMemo(() => {
     const gasolineras = data?.gasolineras ?? []
@@ -127,12 +129,17 @@ const GasStationMap = () => {
 
   if (!data) return <EstadoCarga error={error} onReintentar={() => refetch()} />
 
+  // MapGL solo usa la vista inicial al montarse, que es cuando ya hay datos
+  const vistaInicial = seleccionada
+    ? { longitude: seleccionada.longitud, latitude: seleccionada.latitud, zoom: 16 }
+    : { bounds: LIMITES_LANZAROTE, fitBoundsOptions: { padding: 24 } }
+
   return (
     <MapGL
       ref={mapaRef}
-      initialViewState={{ bounds: LIMITES_LANZAROTE, fitBoundsOptions: { padding: 24 } }}
-      mapStyle={ESTILO_MAPA}
-      style={{ width: '100%', height: 'calc(100vh - 66px)' }}
+      initialViewState={vistaInicial}
+      mapStyle={ESTILOS_MAPA[tema]}
+      style={{ width: '100%', height: 'calc(100dvh - var(--alto-barra))' }}
       onLoad={(e) => setVista(vistaDe(e.target))}
       onMove={(e) => setVista(vistaDe(e.target))}
     >
@@ -169,7 +176,7 @@ const GasStationMap = () => {
             onClick={(e) => {
               // Sin esto, el clic llega al mapa y cierra el popup recién abierto
               e.originalEvent.stopPropagation()
-              setSeleccionada(item)
+              setIdSeleccionada(item.id)
             }}
           >
             <button
@@ -178,7 +185,7 @@ const GasStationMap = () => {
               aria-label={`${item.rotulo}, ${item.direccion}`}
               title={item.rotulo}
             >
-              <LogoMarca marca={marcaDe(item.rotulo)} />
+              <LogoMarca rotulo={item.rotulo} />
             </button>
           </Marker>
         )
@@ -190,7 +197,7 @@ const GasStationMap = () => {
           anchor='bottom'
           offset={24}
           maxWidth='300px'
-          onClose={() => setSeleccionada(null)}
+          onClose={() => setIdSeleccionada(null)}
         >
           <TarjetaGasolinera gasolinera={seleccionada} minimos={minimos} />
         </Popup>

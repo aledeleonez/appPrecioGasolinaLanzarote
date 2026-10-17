@@ -29,3 +29,11 @@ const formatoPrecio = new Intl.NumberFormat('es-ES', {
 export function formatearPrecio(precio: number | null): string {
   return precio === null ? 'No disponible' : `${formatoPrecio.format(precio)} €`
 }
+
+// 1.499 frente a 1.477 → "+0,022 €". null si no hay diferencia que mostrar.
+export function formatearDiferencia(precio: number | null, minimo: number | null): string | null {
+  if (precio === null || minimo === null) return null
+  // Redondeo a milésimas para evitar restos como 0.02199999
+  const diferencia = Math.round((precio - minimo) * 1000) / 1000
+  return diferencia > 0 ? `+${formatoPrecio.format(diferencia)} €` : null
+}
