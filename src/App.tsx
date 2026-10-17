@@ -1,7 +1,11 @@
+import { lazy, Suspense } from 'react'
 import { HashRouter, Link, Route, Routes } from 'react-router'
+import EstadoCarga from './components/EstadoCarga'
 import Fecha from './components/Fecha'
-import GasStationMap from './components/GasStationMap'
 import ListaPrecios from './components/ListaPrecios'
+
+// MapLibre pesa bastante, así que solo se descarga al abrir el mapa
+const GasStationMap = lazy(() => import('./components/GasStationMap'))
 
 // HashRouter porque GitHub Pages no sabe redirigir rutas como /mapa a index.html
 function App() {
@@ -63,9 +67,9 @@ function App() {
           <Route
             path='/mapa'
             element={
-              <div className='container-md'>
+              <Suspense fallback={<EstadoCarga />}>
                 <GasStationMap />
-              </div>
+              </Suspense>
             }
           />
         </Routes>
