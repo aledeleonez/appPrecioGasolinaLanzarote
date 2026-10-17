@@ -1,0 +1,124 @@
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgb(255 255 255 / 0.8);
+  border-bottom: 1px solid rgb(0 0 0 / 0.08);
+  /* El prefijo va primero: al minificar se conserva la última declaración */
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+.barra-contenido {
+  display: flex;
+  gap: 8px 24px;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1080px;
+  height: var(--alto-barra);
+  padding: 0 16px;
+  margin: 0 auto;
+}
+
+.barra-marca {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--texto);
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.barra-marca:hover {
+  color: var(--texto);
+}
+
+.barra-marca img {
+  border-radius: 7px;
+}
+
+/* Control segmentado al estilo de iOS y macOS */
+.barra-secciones {
+  display: flex;
+  padding: 2px;
+  background: rgb(118 118 128 / 0.12);
+  border-radius: 9px;
+}
+
+.barra-seccion {
+  flex: 1;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--texto);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 7px;
+  transition:
+    background-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 100ms ease-out;
+}
+
+.barra-seccion:hover {
+  color: var(--texto);
+  background: rgb(255 255 255 / 0.5);
+}
+
+.barra-seccion:active {
+  transform: scale(0.97);
+}
+
+.barra-seccion.active {
+  font-weight: 600;
+  background: white;
+  box-shadow:
+    0 3px 8px rgb(0 0 0 / 0.12),
+    0 1px 1px rgb(0 0 0 / 0.04);
+}
+
+/* En el móvil, la marca arriba y el control segmentado debajo, a todo el ancho */
+@media (width < 640px) {
+  .barra-contenido {
+    flex-wrap: wrap;
+    align-content: center;
+  }
+
+  .barra-secciones {
+    width: 100%;
+  }
+
+  /* Segmentos del mismo ancho, como en iOS */
+  .barra-seccion {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 5px 4px;
+  }
+}
+
+/* Móviles muy estrechos (320 px): que quepa "Gasolina 98" sin cortarse */
+@media (width < 360px) {
+  .barra-seccion {
+    padding-right: 0;
+    padding-left: 0;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .barra {
+    background: white;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barra-seccion {
+    transition: none;
+  }
+}

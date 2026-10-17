@@ -13,6 +13,8 @@ export type Gasolinera = {
   rotulo: string
   horario: string
   localidad: string
+  // Uno de los 7 municipios de Lanzarote, con tildes ("San Bartolomé")
+  municipio: string
   direccion: string
   latitud: number
   longitud: number

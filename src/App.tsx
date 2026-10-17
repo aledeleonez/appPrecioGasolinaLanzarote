@@ -1,8 +1,9 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Link, Route, Routes } from 'react-router'
+import { BrowserRouter, Route, Routes } from 'react-router'
 import EstadoCarga from './components/EstadoCarga'
-import Fecha from './components/Fecha'
+import Barra from './components/Barra'
 import ListaPrecios from './components/ListaPrecios'
+import Pie from './components/Pie'
 
 // MapLibre pesa bastante, así que solo se descarga al abrir el mapa
 const GasStationMap = lazy(() => import('./components/GasStationMap'))
@@ -11,34 +12,8 @@ const GasStationMap = lazy(() => import('./components/GasStationMap'))
 function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
-      <nav
-        className='navbar navbar-expand-lg navbar-dark bg-dark'
-        style={{ fontWeight: 'bold', color: 'white' }}
-      >
-        <Link className='navbar-brand mb-0 h1' to='/'>
-          <img
-            src='https://cdn-icons-png.flaticon.com/512/2933/2933939.png'
-            alt='Inicio'
-            width='45'
-            height='40'
-            className='d-inline-block align-top'
-          />
-        </Link>
-        <span style={{ fontSize: '20px' }}>Precio de la Gasolina en Lanzarote</span>
-        <Link to='/' className='nav-link px-3'>
-          Gasolina 95
-        </Link>
-        <Link to='/gasolina98' className='nav-link px-3'>
-          Gasolina 98
-        </Link>
-        <Link to='/gasoleo' className='nav-link px-3'>
-          Gasóleo
-        </Link>
-        <Link to='/mapa' className='nav-link px-3'>
-          Mapa
-        </Link>
-      </nav>
-      <div className='bg-light'>
+      <Barra />
+      <main>
         <Routes>
           <Route
             path='/'
@@ -73,8 +48,8 @@ function App() {
             }
           />
         </Routes>
-      </div>
-      <Fecha />
+      </main>
+      <Pie />
     </BrowserRouter>
   )
 }

@@ -1,0 +1,36 @@
+.pie {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--texto-secundario);
+  background: var(--fondo);
+  border-top: 1px solid rgb(0 0 0 / 0.08);
+}
+
+.pie-contenido {
+  max-width: 1080px;
+  padding: 20px 16px 24px;
+  margin: 0 auto;
+}
+
+.pie p {
+  margin-bottom: 8px;
+}
+
+.pie a {
+  color: var(--texto);
+  text-decoration: none;
+}
+
+.pie a:hover {
+  text-decoration: underline;
+}
+
+.pie-final {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid rgb(0 0 0 / 0.08);
+}

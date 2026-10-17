@@ -1,0 +1,128 @@
+.lista {
+  max-width: 760px;
+  padding: 24px 0 40px;
+  margin: 0 auto;
+}
+
+.lista-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.lista-cabecera .form-select {
+  width: auto;
+}
+
+.lista-filas {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  list-style: none;
+  background: white;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 10px;
+}
+
+.fila {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.fila + .fila {
+  border-top: 1px solid var(--bs-border-color);
+}
+
+.fila-posicion {
+  flex-shrink: 0;
+  width: 1.5em;
+  font-weight: 600;
+  color: var(--bs-secondary-color);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.fila-logo {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 3px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+}
+
+.fila-datos {
+  flex: 1;
+  min-width: 0;
+}
+
+.fila-nombre {
+  font-weight: 600;
+}
+
+.fila-direccion {
+  font-size: 14px;
+  color: var(--bs-secondary-color);
+}
+
+.fila-extra {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--bs-secondary-color);
+}
+
+.fila-precio {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.fila-precio-valor {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.fila-precio-nota {
+  font-size: 13px;
+  color: var(--bs-secondary-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.lista-filas-sin-precio .fila {
+  opacity: 0.7;
+}
+
+@media (width < 576px) {
+  .lista {
+    padding-top: 16px;
+  }
+
+  .fila {
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .fila-posicion {
+    display: none;
+  }
+
+  /* Filas más bajas: dirección en una línea y sin horario */
+  .fila-direccion {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .fila-horario {
+    display: none;
+  }
+}
