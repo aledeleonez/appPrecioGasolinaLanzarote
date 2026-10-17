@@ -3,7 +3,7 @@
   line-height: 1.4;
   color: var(--texto-secundario);
   background: var(--fondo);
-  border-top: 1px solid rgb(0 0 0 / 0.08);
+  border-top: 1px solid var(--separador);
 }
 
 .pie-contenido {
@@ -32,5 +32,5 @@
   justify-content: space-between;
   padding-top: 12px;
   margin-top: 12px;
-  border-top: 1px solid rgb(0 0 0 / 0.08);
+  border-top: 1px solid var(--separador);
 }

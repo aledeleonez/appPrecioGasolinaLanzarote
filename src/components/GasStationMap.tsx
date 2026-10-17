@@ -12,14 +12,18 @@ import MapGL, {
 import { useSearchParams } from 'react-router'
 import Supercluster from 'supercluster'
 import { useGasolineras } from '../hooks/useGasolineras'
+import { useTema } from '../hooks/useTema'
 import { NOMBRES_CARBURANTE, type Carburante, type Gasolinera } from '../tipos'
 import { formatearPrecio, precioMinimo } from '../utils/precios'
 import EstadoCarga from './EstadoCarga'
 import LogoMarca from './LogoMarca'
 import './GasStationMap.css'
 
-// Mapa vectorial gratuito y sin clave de API, con datos de OpenStreetMap
-const ESTILO_MAPA = 'https://tiles.openfreemap.org/styles/liberty'
+// Mapas vectoriales gratuitos y sin clave de API, con datos de OpenStreetMap
+const ESTILOS_MAPA = {
+  claro: 'https://tiles.openfreemap.org/styles/liberty',
+  oscuro: 'https://tiles.openfreemap.org/styles/dark',
+}
 
 // Lanzarote completa, de Playa Blanca a Órzola (longitud, latitud)
 const LIMITES_LANZAROTE: [[number, number], [number, number]] = [
@@ -93,6 +97,7 @@ function TarjetaGasolinera({ gasolinera, minimos }: TarjetaProps) {
 // Componente que renderiza el mapa
 const GasStationMap = () => {
   const { data, error, refetch } = useGasolineras()
+  const tema = useTema()
   const mapaRef = useRef<MapRef>(null)
   const [vista, setVista] = useState<Vista | null>(null)
   // La lista enlaza a /mapa?gasolinera=<id> para abrir el mapa centrado en esa gasolinera
@@ -133,7 +138,7 @@ const GasStationMap = () => {
     <MapGL
       ref={mapaRef}
       initialViewState={vistaInicial}
-      mapStyle={ESTILO_MAPA}
+      mapStyle={ESTILOS_MAPA[tema]}
       style={{ width: '100%', height: 'calc(100dvh - var(--alto-barra))' }}
       onLoad={(e) => setVista(vistaDe(e.target))}
       onMove={(e) => setVista(vistaDe(e.target))}

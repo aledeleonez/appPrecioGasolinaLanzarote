@@ -2,8 +2,8 @@
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgb(255 255 255 / 0.8);
-  border-bottom: 1px solid rgb(0 0 0 / 0.08);
+  background: var(--barra-fondo);
+  border-bottom: 1px solid var(--separador);
   /* El prefijo va primero: al minificar se conserva la última declaración */
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
@@ -43,8 +43,9 @@
 /* Control segmentado al estilo de iOS y macOS */
 .barra-secciones {
   display: flex;
+  margin-left: auto;
   padding: 2px;
-  background: rgb(118 118 128 / 0.12);
+  background: var(--segmentos-fondo);
   border-radius: 9px;
 }
 
@@ -66,7 +67,7 @@
 
 .barra-seccion:hover {
   color: var(--texto);
-  background: rgb(255 255 255 / 0.5);
+  background: var(--segmento-hover);
 }
 
 .barra-seccion:active {
@@ -75,10 +76,30 @@
 
 .barra-seccion.active {
   font-weight: 600;
-  background: white;
+  background: var(--segmento-activo);
   box-shadow:
     0 3px 8px rgb(0 0 0 / 0.12),
     0 1px 1px rgb(0 0 0 / 0.04);
+}
+
+.barra-tema {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--texto);
+  cursor: pointer;
+  background: var(--segmentos-fondo);
+  border: 0;
+  border-radius: 50%;
+  transition: transform 100ms ease-out;
+}
+
+.barra-tema:active {
+  transform: scale(0.92);
 }
 
 /* En el móvil, la marca arriba y el control segmentado debajo, a todo el ancho */
@@ -88,8 +109,16 @@
     align-content: center;
   }
 
+  /* Fila 1: marca y botón de tema. Fila 2: secciones */
+  .barra-tema {
+    order: 2;
+    margin-left: auto;
+  }
+
   .barra-secciones {
+    order: 3;
     width: 100%;
+    margin-left: 0;
   }
 
   /* Segmentos del mismo ancho, como en iOS */
@@ -111,14 +140,15 @@
 
 @media (prefers-reduced-transparency: reduce) {
   .barra {
-    background: white;
+    background: var(--superficie);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .barra-seccion {
+  .barra-seccion,
+  .barra-tema {
     transition: none;
   }
 }
