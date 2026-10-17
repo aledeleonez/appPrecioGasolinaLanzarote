@@ -1,17 +1,12 @@
-import { useEffect, useState } from 'react'
-import { fetchFecha } from '../api/gasolineras'
+import { useGasolineras } from '../hooks/useGasolineras'
 
 function Fecha() {
-  const [fecha, setFecha] = useState<string>()
-
-  useEffect(() => {
-    fetchFecha().then(setFecha)
-  }, [])
+  const { data } = useGasolineras()
 
   return (
     <footer className='bg-dark text-center text-lg-start' style={{ color: 'white' }}>
       <p className='text-center'>
-        Fecha y hora de precios: {fecha} <br />
+        Fecha y hora de precios: {data?.fecha} <br />
         Datos obtenidos del{' '}
         <a href='https://sede.serviciosmin.gob.es/es-es/Paginas/Index.aspx'>
           Ministerio de Industria, Comercio y Turismo

@@ -19,15 +19,10 @@ export function ordenarPorPrecio(gasolineras: Gasolinera[], carburante: Carburan
   })
 }
 
-export function esLaMasBarata(
-  gasolinera: Gasolinera,
-  gasolineras: Gasolinera[],
-  carburante: Carburante,
-): boolean {
-  const precio = parseDecimal(gasolinera[carburante])
-  if (precio === null) return false
+// Precio más bajo de ese carburante, o null si ninguna gasolinera lo vende
+export function precioMinimo(gasolineras: Gasolinera[], carburante: Carburante): number | null {
   const precios = gasolineras
     .map((g) => parseDecimal(g[carburante]))
     .filter((p): p is number => p !== null)
-  return precio === Math.min(...precios)
+  return precios.length > 0 ? Math.min(...precios) : null
 }

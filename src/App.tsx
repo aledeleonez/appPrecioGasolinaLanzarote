@@ -1,9 +1,7 @@
 import { HashRouter, Link, Route, Routes } from 'react-router'
 import Fecha from './components/Fecha'
-import Gasoleo from './components/Gasoleo'
-import Gasolina95 from './components/Gasolina95'
-import Gasolina98 from './components/Gasolina98'
 import GasStationMap from './components/GasStationMap'
+import ListaPrecios from './components/ListaPrecios'
 
 // HashRouter porque GitHub Pages no sabe redirigir rutas como /mapa a index.html
 function App() {
@@ -41,8 +39,8 @@ function App() {
           <Route
             path='/'
             element={
-              <div className='container'>
-                <Gasolina95 />
+              <div className='container-md'>
+                <ListaPrecios carburante='Precio Gasolina 95 E5' />
               </div>
             }
           />
@@ -50,7 +48,7 @@ function App() {
             path='/gasoleo'
             element={
               <div className='container-md'>
-                <Gasoleo />
+                <ListaPrecios carburante='Precio Gasoleo A' />
               </div>
             }
           />
@@ -58,7 +56,7 @@ function App() {
             path='/gasolina98'
             element={
               <div className='container-md'>
-                <Gasolina98 />
+                <ListaPrecios carburante='Precio Gasolina 98 E5' />
               </div>
             }
           />

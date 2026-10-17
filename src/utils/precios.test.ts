@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Gasolinera } from '../api/gasolineras'
-import { esLaMasBarata, ordenarPorPrecio, parseDecimal } from './precios'
+import { ordenarPorPrecio, parseDecimal, precioMinimo } from './precios'
 
 function gasolinera(id: string, precio98: string): Gasolinera {
   return {
@@ -48,15 +48,13 @@ describe('ordenarPorPrecio', () => {
   })
 })
 
-describe('esLaMasBarata', () => {
-  const lista = [gasolinera('a', '1,709'), gasolinera('b', ''), gasolinera('c', '1,659')]
-
-  it('marca solo la de menor precio', () => {
-    expect(esLaMasBarata(lista[2], lista, 'Precio Gasolina 98 E5')).toBe(true)
-    expect(esLaMasBarata(lista[0], lista, 'Precio Gasolina 98 E5')).toBe(false)
+describe('precioMinimo', () => {
+  it('ignora las gasolineras sin precio', () => {
+    const lista = [gasolinera('a', '1,709'), gasolinera('b', ''), gasolinera('c', '1,659')]
+    expect(precioMinimo(lista, 'Precio Gasolina 98 E5')).toBe(1.659)
   })
 
-  it('nunca marca una gasolinera sin precio', () => {
-    expect(esLaMasBarata(lista[1], lista, 'Precio Gasolina 98 E5')).toBe(false)
+  it('devuelve null si ninguna tiene precio', () => {
+    expect(precioMinimo([gasolinera('a', '')], 'Precio Gasolina 98 E5')).toBeNull()
   })
 })

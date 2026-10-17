@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
-import { fetchGasolineras, type Gasolinera } from '../api/gasolineras'
+import { useGasolineras } from '../hooks/useGasolineras'
 import { parseDecimal } from '../utils/precios'
+import EstadoCarga from './EstadoCarga'
 
 function crearIcono(url: string) {
   return new L.Icon({
@@ -30,11 +30,9 @@ function iconoPara(rotulo: string) {
 
 // Componente que renderiza el mapa
 const GasStationMap = () => {
-  const [gasolineras, setGasolineras] = useState<Gasolinera[]>([])
+  const { data, error, refetch } = useGasolineras()
 
-  useEffect(() => {
-    fetchGasolineras().then(setGasolineras)
-  }, [])
+  if (!data) return <EstadoCarga error={error} onReintentar={() => refetch()} />
 
   return (
     <MapContainer
@@ -46,7 +44,7 @@ const GasStationMap = () => {
         url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
-      {gasolineras.map((item) => {
+      {data.gasolineras.map((item) => {
         const latitud = parseDecimal(item.Latitud)
         const longitud = parseDecimal(item['Longitud (WGS84)'])
         if (latitud === null || longitud === null) return null

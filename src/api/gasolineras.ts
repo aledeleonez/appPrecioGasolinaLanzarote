@@ -18,6 +18,12 @@ export type Carburante =
   | 'Precio Gasolina 98 E5'
   | 'Precio Gasoleo A'
 
+export const NOMBRES_CARBURANTE: Record<Carburante, string> = {
+  'Precio Gasolina 95 E5': 'Gasolina 95',
+  'Precio Gasolina 98 E5': 'Gasolina 98',
+  'Precio Gasoleo A': 'Gasóleo',
+}
+
 // Solo los campos que usa la app; la API devuelve muchos más.
 // Los números llegan como texto con coma decimal ("1,459") y vacíos si no hay dato.
 export type Gasolinera = {
@@ -43,13 +49,17 @@ async function fetchMunicipio(codigo: string): Promise<RespuestaMunicipio> {
   return respuesta.json()
 }
 
-export async function fetchGasolineras(): Promise<Gasolinera[]> {
-  const respuestas = await Promise.all(Object.values(MUNICIPIOS).map(fetchMunicipio))
-  return respuestas.flatMap((r) => r.ListaEESSPrecio)
+export type DatosGasolineras = {
+  // Fecha y hora de los precios, tal como la da la API ("17/10/2026 13:19:17")
+  fecha: string
+  gasolineras: Gasolinera[]
 }
 
-// Todas las respuestas traen la misma fecha, así que basta con un municipio pequeño
-export async function fetchFecha(): Promise<string> {
-  const respuesta = await fetchMunicipio(MUNICIPIOS.haria)
-  return respuesta.Fecha
+export async function fetchGasolineras(): Promise<DatosGasolineras> {
+  const respuestas = await Promise.all(Object.values(MUNICIPIOS).map(fetchMunicipio))
+  return {
+    // Todas las respuestas traen la misma fecha
+    fecha: respuestas[0].Fecha,
+    gasolineras: respuestas.flatMap((r) => r.ListaEESSPrecio),
+  }
 }
