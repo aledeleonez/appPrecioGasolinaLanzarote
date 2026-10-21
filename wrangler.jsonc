@@ -1,0 +1,12 @@
+// Worker de Cloudflare que sirve la web: solo archivos estáticos de dist/.
+// La GitHub Action lo publica con `wrangler deploy` (.github/workflows/deploy.yml).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "gasolinacanarias",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // Cualquier ruta que no sea un archivo (/tenerife/mapa...) devuelve index.html
+    "not_found_handling": "single-page-application"
+  }
+}

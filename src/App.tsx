@@ -21,8 +21,6 @@ function IrALanzarote() {
   return <Navigate replace to={`/lanzarote${pathname}${search}`} />
 }
 
-// Las páginas lanzarote.html, lanzarote/mapa.html, etc. que genera vite.config.ts
-// hacen que /lanzarote/mapa funcione en GitHub Pages
 function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>

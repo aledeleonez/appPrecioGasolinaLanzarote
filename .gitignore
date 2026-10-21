@@ -4,3 +4,5 @@ dist
 .DS_Store
 # Lo genera npm run datos
 public/data
+# Caché local de wrangler
+.wrangler
