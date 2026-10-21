@@ -1,8 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { moverArticulo, normalizarEstacion, parseDecimal, type EstacionApi } from './minetur.ts'
+import { ISLAS } from '../src/islas.ts'
+import {
+  moverArticulo,
+  MUNICIPIOS,
+  normalizarEstacion,
+  parseDecimal,
+  repartirPorIsla,
+  type EstacionApi,
+} from './minetur.ts'
 
 const estacion: EstacionApi = {
   IDEESS: '7908',
+  IDMunicipio: '5251',
   'Rótulo': 'DISA',
   Horario: 'L-D: 24H',
   Localidad: 'SAN BARTOLOME',
@@ -62,5 +71,27 @@ describe('normalizarEstacion', () => {
 
   it('descarta las estaciones sin coordenadas', () => {
     expect(normalizarEstacion({ ...estacion, Latitud: '' })).toBeNull()
+  })
+})
+
+describe('MUNICIPIOS', () => {
+  it('tiene los 88 municipios canarios, cada uno en una sola isla', () => {
+    const codigos = Object.values(MUNICIPIOS).flatMap((m) => Object.values(m))
+    expect(codigos).toHaveLength(88)
+    expect(new Set(codigos).size).toBe(88)
+  })
+
+  it('tiene una entrada por cada isla de la web', () => {
+    expect(Object.keys(MUNICIPIOS).sort()).toEqual(ISLAS.map((i) => i.id).sort())
+  })
+})
+
+describe('repartirPorIsla', () => {
+  it('pone cada estación en la isla de su municipio', () => {
+    const laOliva = { ...estacion, IDEESS: '1', IDMunicipio: '5247' }
+    const islas = repartirPorIsla([estacion, laOliva], '21/10/2026 13:24:54')
+    expect(islas.lanzarote.gasolineras.map((g) => g.id)).toEqual(['7908'])
+    expect(islas.fuerteventura.gasolineras.map((g) => g.id)).toEqual(['1'])
+    expect(islas.tenerife).toEqual({ fecha: '21/10/2026 13:24:54', gasolineras: [] })
   })
 })
