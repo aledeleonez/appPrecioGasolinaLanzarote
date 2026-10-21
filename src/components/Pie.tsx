@@ -23,7 +23,7 @@ function Pie() {
         </p>
         <div className='pie-final'>
           <span>© 2022 Alejandro de León Fernández</span>
-          <a href='https://github.com/aledeleonez/appPrecioGasolinaLanzarote'>Código en GitHub</a>
+          <a href='https://github.com/aledeleonez/PrecioGasolinaCanarias'>Código en GitHub</a>
         </div>
       </div>
     </footer>
