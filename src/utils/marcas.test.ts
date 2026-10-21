@@ -13,6 +13,10 @@ describe('marcaDe', () => {
     expect(marcaDe('COMBUSTIBLES CANARIOS').logo).toBe('combustibles-canarios.jpg')
     expect(marcaDe('ESTACION PLAYA BLANCA').logo).toBe('combustibles-canarios.jpg')
     expect(marcaDe('SANTANA DOMINGUEZ').logo).toBe('santana-dominguez.png')
+    expect(marcaDe('CANARY OIL, S.L.').logo).toBe('canary-oil.png')
+    expect(marcaDe('H2EXAGON JINAMAR').logo).toBe('h2exagon.svg')
+    expect(marcaDe('EESS OCÉANO  LA AZADILLA').logo).toBe('oceano.png')
+    expect(marcaDe('OCEANO TACO').logo).toBe('oceano.png')
   })
 
   it('usa el logo de Repsol para las estaciones H2GO', () => {
@@ -33,5 +37,6 @@ describe('marcaDe', () => {
     expect(marcaDe('PETROLERA SUR').iniciales).toBe('PS')
     expect(marcaDe('ABCD NORTE').iniciales).toBe('ABCD')
     expect(marcaDe('ESTACION ROQUE NUBLO').iniciales).toBe('RN')
+    expect(marcaDe('DEL VALLE COMBUSTIBLES, S.L.').iniciales).toBe('VC')
   })
 })

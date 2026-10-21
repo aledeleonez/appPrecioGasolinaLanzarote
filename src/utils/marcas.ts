@@ -30,10 +30,16 @@ const MARCAS: { claves: string[]; nombre: string; logo: string }[] = [
   },
   // https://www.combustiblesantana.com/ (Tuineje, Fuerteventura)
   { claves: ['SANTANA DOMINGUEZ'], nombre: 'Santana Domínguez', logo: 'santana-dominguez.png' },
+  // https://canaryoil.com/ (Tenerife y Gran Canaria)
+  { claves: ['CANARY OIL'], nombre: 'Canary Oil', logo: 'canary-oil.png' },
+  // https://h2exagon.es/ (Gran Canaria y Tenerife)
+  { claves: ['H2EXAGON'], nombre: 'H2exagon', logo: 'h2exagon.svg' },
+  // https://www.grupoinsularoceano.es/ (Tenerife, Gran Canaria y La Gomera)
+  { claves: ['OCÉANO', 'OCEANO'], nombre: 'Océano', logo: 'oceano.png' },
 ]
 
 // Palabras que no ayudan a identificar la estación
-const GENERICAS = new Set(['ESTACION', 'ESTACIÓN', 'GASOLINERA', 'ES', 'E', 'S', 'DE', 'LA', 'EL'])
+const GENERICAS = new Set(['ESTACION', 'ESTACIÓN', 'GASOLINERA', 'ES', 'E', 'S', 'DE', 'DEL', 'LA', 'EL'])
 
 // "SPL" → "SPL", "TGAS HARÍA" → "TGAS", "COMBUSTIBLES CANARIOS" → "CC"
 function iniciales(rotulo: string): string {
