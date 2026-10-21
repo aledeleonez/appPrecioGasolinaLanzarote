@@ -1,19 +1,31 @@
+import type { IdIsla } from '../src/islas.ts'
 import type { DatosGasolineras, Gasolinera } from '../src/tipos.ts'
 
 // API REST de precios de carburantes del Ministerio
 const API_URL =
   'https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/FiltroMunicipio/'
 
-// Códigos de los municipios de Lanzarote en la API
-export const MUNICIPIOS = {
-  arrecife: '5237',
-  teguise: '5256',
-  haria: '5243',
-  yaiza: '5266',
-  tinajo: '5261',
-  sanBartolome: '5251',
-  tias: '5260',
-} as const
+// Códigos de los municipios de cada isla en la API
+// (https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/Listados/MunicipiosPorProvincia/35)
+export const MUNICIPIOS: Record<IdIsla, Record<string, string>> = {
+  lanzarote: {
+    arrecife: '5237',
+    teguise: '5256',
+    haria: '5243',
+    yaiza: '5266',
+    tinajo: '5261',
+    sanBartolome: '5251',
+    tias: '5260',
+  },
+  fuerteventura: {
+    antigua: '5236',
+    betancuria: '5240',
+    laOliva: '5247',
+    pajara: '5248',
+    puertoDelRosario: '5250',
+    tuineje: '5262',
+  },
+}
 
 // Solo los campos que usamos; la API devuelve muchos más.
 // Los números llegan como texto con coma decimal ("1,459") y vacíos si no hay dato.
@@ -43,6 +55,12 @@ export function parseDecimal(valor: string): number | null {
   return Number.isNaN(numero) ? null : numero
 }
 
+// La API pone el artículo al final: "Oliva (La)" → "La Oliva", "CASTILLO (EL)" → "EL CASTILLO"
+export function moverArticulo(nombre: string): string {
+  const partes = nombre.match(/^(.+?)\s*\((\p{L}+)\)$/u)
+  return partes ? `${partes[2]} ${partes[1]}` : nombre
+}
+
 // Devuelve null si la estación no tiene coordenadas válidas
 export function normalizarEstacion(estacion: EstacionApi): Gasolinera | null {
   const latitud = parseDecimal(estacion.Latitud)
@@ -52,8 +70,8 @@ export function normalizarEstacion(estacion: EstacionApi): Gasolinera | null {
     id: estacion.IDEESS,
     rotulo: estacion['Rótulo'],
     horario: estacion.Horario,
-    localidad: estacion.Localidad,
-    municipio: estacion.Municipio,
+    localidad: moverArticulo(estacion.Localidad),
+    municipio: moverArticulo(estacion.Municipio),
     direccion: estacion['Dirección'],
     latitud,
     longitud,
@@ -73,8 +91,8 @@ async function fetchMunicipio(codigo: string): Promise<RespuestaMunicipio> {
   return respuesta.json() as Promise<RespuestaMunicipio>
 }
 
-export async function descargarGasolineras(): Promise<DatosGasolineras> {
-  const respuestas = await Promise.all(Object.values(MUNICIPIOS).map(fetchMunicipio))
+export async function descargarGasolineras(isla: IdIsla): Promise<DatosGasolineras> {
+  const respuestas = await Promise.all(Object.values(MUNICIPIOS[isla]).map(fetchMunicipio))
   return {
     // Todas las respuestas traen la misma fecha
     fecha: respuestas[0].Fecha,

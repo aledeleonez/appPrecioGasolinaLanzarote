@@ -39,7 +39,7 @@
   color: var(--verde) !important;
 }
 
-@media (width < 640px) {
+@media (width < 800px) {
   :root {
     /* Marca y control segmentado en dos filas */
     --alto-barra: 92px;

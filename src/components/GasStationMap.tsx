@@ -12,6 +12,7 @@ import MapGL, {
 import { useSearchParams } from 'react-router'
 import Supercluster from 'supercluster'
 import { useGasolineras } from '../hooks/useGasolineras'
+import { useIsla } from '../hooks/useIsla'
 import { useTema } from '../hooks/useTema'
 import { NOMBRES_CARBURANTE, type Carburante, type Gasolinera } from '../tipos'
 import { formatearPrecio, precioMinimo } from '../utils/precios'
@@ -24,12 +25,6 @@ const ESTILOS_MAPA = {
   claro: 'https://tiles.openfreemap.org/styles/liberty',
   oscuro: 'https://tiles.openfreemap.org/styles/dark',
 }
-
-// Lanzarote completa, de Playa Blanca a Órzola (longitud, latitud)
-const LIMITES_LANZAROTE: [[number, number], [number, number]] = [
-  [-13.88, 28.84],
-  [-13.42, 29.24],
-]
 
 const CARBURANTES = Object.keys(NOMBRES_CARBURANTE) as Carburante[]
 
@@ -96,11 +91,12 @@ function TarjetaGasolinera({ gasolinera, minimos }: TarjetaProps) {
 
 // Componente que renderiza el mapa
 const GasStationMap = () => {
-  const { data, error, refetch } = useGasolineras()
+  const isla = useIsla()
+  const { data, error, refetch } = useGasolineras(isla.id)
   const tema = useTema()
   const mapaRef = useRef<MapRef>(null)
   const [vista, setVista] = useState<Vista | null>(null)
-  // La lista enlaza a /mapa?gasolinera=<id> para abrir el mapa centrado en esa gasolinera
+  // La lista enlaza a /<isla>/mapa?gasolinera=<id> para abrir el mapa centrado en esa gasolinera
   const [parametros] = useSearchParams()
   const [idSeleccionada, setIdSeleccionada] = useState(parametros.get('gasolinera'))
   const seleccionada = data?.gasolineras.find((g) => g.id === idSeleccionada) ?? null
@@ -112,7 +108,7 @@ const GasStationMap = () => {
     ) as Record<Carburante, number | null>
   }, [data])
 
-  // Agrupa las gasolineras cercanas para que no se amontonen al alejar el mapa (Arrecife)
+  // Agrupa las gasolineras cercanas para que no se amontonen al alejar el mapa (Arrecife, Puerto del Rosario)
   const indice = useMemo(() => {
     const supercluster = new Supercluster<Gasolinera>({ radius: 40, maxZoom: 15 })
     supercluster.load(
@@ -132,7 +128,7 @@ const GasStationMap = () => {
   // MapGL solo usa la vista inicial al montarse, que es cuando ya hay datos
   const vistaInicial = seleccionada
     ? { longitude: seleccionada.longitud, latitude: seleccionada.latitud, zoom: 16 }
-    : { bounds: LIMITES_LANZAROTE, fitBoundsOptions: { padding: 24 } }
+    : { bounds: isla.limites, fitBoundsOptions: { padding: 24 } }
 
   return (
     <MapGL

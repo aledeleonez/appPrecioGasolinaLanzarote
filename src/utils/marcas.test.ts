@@ -12,6 +12,11 @@ describe('marcaDe', () => {
     expect(marcaDe('TGAS HARÍA').logo).toBe('tgas.jpg')
     expect(marcaDe('COMBUSTIBLES CANARIOS').logo).toBe('combustibles-canarios.jpg')
     expect(marcaDe('ESTACION PLAYA BLANCA').logo).toBe('combustibles-canarios.jpg')
+    expect(marcaDe('SANTANA DOMINGUEZ').logo).toBe('santana-dominguez.png')
+  })
+
+  it('usa el logo de Repsol para las estaciones H2GO', () => {
+    expect(marcaDe('H2GO CORRALEJO')).toMatchObject({ nombre: 'Repsol', logo: 'repsol.svg' })
   })
 
   it('usa el logo de Moeve para las estaciones con rótulo CEPSA', () => {

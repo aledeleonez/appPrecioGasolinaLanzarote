@@ -9,7 +9,8 @@ export type Marca = {
 // El rótulo suele llevar la marca más el nombre de la estación ("DISA COSTA TEGUISE").
 // CEPSA pasó a llamarse Moeve en 2024, pero algunas estaciones siguen con el rótulo antiguo.
 const MARCAS: { claves: string[]; nombre: string; logo: string }[] = [
-  { claves: ['REPSOL'], nombre: 'Repsol', logo: 'repsol.svg' },
+  // H2GO es la marca de Repsol en algunas estaciones de Fuerteventura
+  { claves: ['REPSOL', 'H2GO'], nombre: 'Repsol', logo: 'repsol.svg' },
   { claves: ['MOEVE', 'CEPSA'], nombre: 'Moeve', logo: 'moeve.svg' },
   { claves: ['DISA'], nombre: 'DISA', logo: 'disa.png' },
   { claves: ['SHELL'], nombre: 'Shell', logo: 'shell.svg' },
@@ -27,6 +28,8 @@ const MARCAS: { claves: string[]; nombre: string; logo: string }[] = [
     nombre: 'Combustibles Canarios',
     logo: 'combustibles-canarios.jpg',
   },
+  // https://www.combustiblesantana.com/ (Tuineje, Fuerteventura)
+  { claves: ['SANTANA DOMINGUEZ'], nombre: 'Santana Domínguez', logo: 'santana-dominguez.png' },
 ]
 
 // Palabras que no ayudan a identificar la estación
