@@ -30,6 +30,10 @@ const MARCAS: { claves: string[]; nombre: string; logo: string }[] = [
   },
   // https://www.combustiblesantana.com/ (Tuineje, Fuerteventura)
   { claves: ['SANTANA DOMINGUEZ'], nombre: 'Santana Domínguez', logo: 'santana-dominguez.png' },
+  // https://canaryoil.com/ (Tenerife y Gran Canaria)
+  { claves: ['CANARY OIL'], nombre: 'Canary Oil', logo: 'canary-oil.png' },
+  // https://h2exagon.es/ (Gran Canaria y Tenerife)
+  { claves: ['H2EXAGON'], nombre: 'H2exagon', logo: 'h2exagon.svg' },
 ]
 
 // Palabras que no ayudan a identificar la estación
