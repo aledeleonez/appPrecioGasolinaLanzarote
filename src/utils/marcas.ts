@@ -33,7 +33,7 @@ const MARCAS: { claves: string[]; nombre: string; logo: string }[] = [
 ]
 
 // Palabras que no ayudan a identificar la estación
-const GENERICAS = new Set(['ESTACION', 'ESTACIÓN', 'GASOLINERA', 'ES', 'E', 'S', 'DE', 'LA', 'EL'])
+const GENERICAS = new Set(['ESTACION', 'ESTACIÓN', 'GASOLINERA', 'ES', 'E', 'S', 'DE', 'DEL', 'LA', 'EL'])
 
 // "SPL" → "SPL", "TGAS HARÍA" → "TGAS", "COMBUSTIBLES CANARIOS" → "CC"
 function iniciales(rotulo: string): string {

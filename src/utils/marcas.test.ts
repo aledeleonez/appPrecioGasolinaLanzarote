@@ -33,5 +33,6 @@ describe('marcaDe', () => {
     expect(marcaDe('PETROLERA SUR').iniciales).toBe('PS')
     expect(marcaDe('ABCD NORTE').iniciales).toBe('ABCD')
     expect(marcaDe('ESTACION ROQUE NUBLO').iniciales).toBe('RN')
+    expect(marcaDe('DEL VALLE COMBUSTIBLES, S.L.').iniciales).toBe('VC')
   })
 })
