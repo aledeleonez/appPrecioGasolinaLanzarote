@@ -15,6 +15,8 @@ describe('marcaDe', () => {
     expect(marcaDe('SANTANA DOMINGUEZ').logo).toBe('santana-dominguez.png')
     expect(marcaDe('CANARY OIL, S.L.').logo).toBe('canary-oil.png')
     expect(marcaDe('H2EXAGON JINAMAR').logo).toBe('h2exagon.svg')
+    expect(marcaDe('EESS OCÉANO  LA AZADILLA').logo).toBe('oceano.png')
+    expect(marcaDe('OCEANO TACO').logo).toBe('oceano.png')
   })
 
   it('usa el logo de Repsol para las estaciones H2GO', () => {

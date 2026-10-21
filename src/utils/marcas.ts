@@ -34,6 +34,8 @@ const MARCAS: { claves: string[]; nombre: string; logo: string }[] = [
   { claves: ['CANARY OIL'], nombre: 'Canary Oil', logo: 'canary-oil.png' },
   // https://h2exagon.es/ (Gran Canaria y Tenerife)
   { claves: ['H2EXAGON'], nombre: 'H2exagon', logo: 'h2exagon.svg' },
+  // https://www.grupoinsularoceano.es/ (Tenerife, Gran Canaria y La Gomera)
+  { claves: ['OCÉANO', 'OCEANO'], nombre: 'Océano', logo: 'oceano.png' },
 ]
 
 // Palabras que no ayudan a identificar la estación
