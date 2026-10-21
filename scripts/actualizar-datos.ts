@@ -1,15 +1,18 @@
-// Descarga los precios de la API del Ministerio y los guarda en public/data/gasolineras.json.
+// Descarga los precios de la API del Ministerio y los guarda en public/data/<isla>.json.
 // Lo ejecuta la GitHub Action antes de cada despliegue y `npm run dev` al arrancar.
 import { mkdir, writeFile } from 'node:fs/promises'
-import { descargarGasolineras } from './minetur.ts'
+import type { IdIsla } from '../src/islas.ts'
+import { descargarGasolineras, MUNICIPIOS } from './minetur.ts'
 
-const DESTINO = new URL('../public/data/gasolineras.json', import.meta.url)
+const DESTINO = new URL('../public/data/', import.meta.url)
 
-const datos = await descargarGasolineras()
-if (datos.gasolineras.length === 0) {
-  throw new Error('La API no ha devuelto ninguna gasolinera')
+await mkdir(DESTINO, { recursive: true })
+
+for (const isla of Object.keys(MUNICIPIOS) as IdIsla[]) {
+  const datos = await descargarGasolineras(isla)
+  if (datos.gasolineras.length === 0) {
+    throw new Error(`La API no ha devuelto ninguna gasolinera de ${isla}`)
+  }
+  await writeFile(new URL(`${isla}.json`, DESTINO), JSON.stringify(datos))
+  console.log(`${isla}: ${datos.gasolineras.length} gasolineras guardadas (precios del ${datos.fecha})`)
 }
-
-await mkdir(new URL('.', DESTINO), { recursive: true })
-await writeFile(DESTINO, JSON.stringify(datos))
-console.log(`${datos.gasolineras.length} gasolineras guardadas (precios del ${datos.fecha})`)

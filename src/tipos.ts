@@ -1,4 +1,4 @@
-// Formato del gasolineras.json que genera scripts/actualizar-datos.ts y lee la web
+// Formato de los JSON por isla (lanzarote.json...) que genera scripts/actualizar-datos.ts y lee la web
 
 export type Carburante = 'gasolina95' | 'gasolina98' | 'gasoleo'
 
@@ -13,7 +13,7 @@ export type Gasolinera = {
   rotulo: string
   horario: string
   localidad: string
-  // Uno de los 7 municipios de Lanzarote, con tildes ("San Bartolomé")
+  // Municipio de la isla, con tildes y el artículo delante ("San Bartolomé", "La Oliva")
   municipio: string
   direccion: string
   latitud: number

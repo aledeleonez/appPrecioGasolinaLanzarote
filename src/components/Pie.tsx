@@ -1,9 +1,10 @@
 import { useGasolineras } from '../hooks/useGasolineras'
+import { useIsla } from '../hooks/useIsla'
 import { formatearFecha } from '../utils/texto'
 import './Pie.css'
 
 function Pie() {
-  const { data } = useGasolineras()
+  const { data } = useGasolineras(useIsla().id)
 
   return (
     <footer className='pie'>

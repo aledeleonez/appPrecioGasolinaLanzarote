@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { useGasolineras } from '../hooks/useGasolineras'
+import { useIsla } from '../hooks/useIsla'
 import { NOMBRES_CARBURANTE, type Carburante, type Gasolinera } from '../tipos'
 import {
   formatearDiferencia,
@@ -24,6 +25,7 @@ type FilaProps = {
 }
 
 function FilaGasolinera({ gasolinera, carburante, minimo, posicion }: FilaProps) {
+  const isla = useIsla()
   const precio = gasolinera.precios[carburante]
   const esLaMasBarata = precio !== null && precio === minimo
   const otros = CARBURANTES.filter((c) => c !== carburante && gasolinera.precios[c] !== null)
@@ -46,7 +48,7 @@ function FilaGasolinera({ gasolinera, carburante, minimo, posicion }: FilaProps)
             </span>
           ))}
           <span className='fila-horario'>{gasolinera.horario}</span>
-          <Link to={`/mapa?gasolinera=${gasolinera.id}`}>Ver en el mapa</Link>
+          <Link to={`/${isla.id}/mapa?gasolinera=${gasolinera.id}`}>Ver en el mapa</Link>
         </div>
       </div>
       {precio !== null && (
@@ -69,7 +71,8 @@ type Props = {
 
 // Ranking de gasolineras de la más barata a la más cara para el carburante elegido
 function ListaPrecios({ carburante }: Props) {
-  const { data, error, refetch } = useGasolineras()
+  const isla = useIsla()
+  const { data, error, refetch } = useGasolineras(isla.id)
   const [parametros, setParametros] = useSearchParams()
 
   const municipios = useMemo(
@@ -95,7 +98,7 @@ function ListaPrecios({ carburante }: Props) {
     <div className='lista'>
       <div className='lista-cabecera'>
         <h1 className='h4 mb-0'>
-          {nombre} en {municipio ?? 'Lanzarote'}
+          {nombre} en {municipio ?? isla.nombre}
         </h1>
         <select
           className='form-select form-select-sm'

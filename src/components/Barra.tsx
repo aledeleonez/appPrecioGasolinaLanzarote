@@ -1,9 +1,12 @@
-import { Link, NavLink } from 'react-router'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router'
+import { guardarIsla, useIsla } from '../hooks/useIsla'
 import { cambiarTema, useTema } from '../hooks/useTema'
+import { ISLAS, type IdIsla } from '../islas'
 import './Barra.css'
 
+// Rutas dentro de cada isla: /lanzarote, /lanzarote/gasolina98...
 const SECCIONES = [
-  { ruta: '/', nombre: 'Gasolina 95' },
+  { ruta: '', nombre: 'Gasolina 95' },
   { ruta: '/gasolina98', nombre: 'Gasolina 98' },
   { ruta: '/gasoleo', nombre: 'Gasóleo' },
   { ruta: '/mapa', nombre: 'Mapa' },
@@ -32,17 +35,40 @@ function IconoLuna() {
 function Barra() {
   const tema = useTema()
   const siguiente = tema === 'oscuro' ? 'claro' : 'oscuro'
+  const isla = useIsla()
+  const { pathname } = useLocation()
+  const navegar = useNavigate()
+
+  // Abre la misma sección en la otra isla. El municipio y la gasolinera
+  // elegidos no existen allí, así que no se pasan los parámetros.
+  function cambiarIsla(nueva: IdIsla) {
+    guardarIsla(nueva)
+    const seccion = SECCIONES.find((s) => s.ruta && pathname.startsWith(`/${isla.id}${s.ruta}`))
+    navegar(`/${nueva}${seccion?.ruta ?? ''}`)
+  }
 
   return (
     <header className='barra'>
       <div className='barra-contenido'>
-        <Link className='barra-marca' to='/'>
+        <Link className='barra-marca' to={`/${isla.id}`} aria-label='Gasolina Canarias'>
           <img src={`${import.meta.env.BASE_URL}logo.svg`} alt='' width='28' height='28' />
-          <span>Gasolina Lanzarote</span>
+          <span>Gasolina Canarias</span>
         </Link>
+        <select
+          className='barra-isla'
+          aria-label='Isla'
+          value={isla.id}
+          onChange={(e) => cambiarIsla(e.target.value as IdIsla)}
+        >
+          {ISLAS.map((i) => (
+            <option key={i.id} value={i.id}>
+              {i.nombre}
+            </option>
+          ))}
+        </select>
         <nav className='barra-secciones' aria-label='Secciones'>
           {SECCIONES.map((s) => (
-            <NavLink key={s.ruta} to={s.ruta} end className='barra-seccion'>
+            <NavLink key={s.ruta} to={`/${isla.id}${s.ruta}`} end className='barra-seccion'>
               {s.nombre}
             </NavLink>
           ))}

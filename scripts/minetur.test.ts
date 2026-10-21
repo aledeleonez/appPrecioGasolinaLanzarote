@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normalizarEstacion, parseDecimal, type EstacionApi } from './minetur.ts'
+import { moverArticulo, normalizarEstacion, parseDecimal, type EstacionApi } from './minetur.ts'
 
 const estacion: EstacionApi = {
   IDEESS: '7908',
@@ -27,6 +27,17 @@ describe('parseDecimal', () => {
   })
 })
 
+describe('moverArticulo', () => {
+  it('pone delante el artículo que la API deja entre paréntesis', () => {
+    expect(moverArticulo('Oliva (La)')).toBe('La Oliva')
+    expect(moverArticulo('CASTILLO (EL)')).toBe('EL CASTILLO')
+  })
+
+  it('deja igual los nombres sin artículo', () => {
+    expect(moverArticulo('Puerto del Rosario')).toBe('Puerto del Rosario')
+  })
+})
+
 describe('normalizarEstacion', () => {
   it('convierte los textos de la API en números', () => {
     expect(normalizarEstacion(estacion)).toEqual({
@@ -39,6 +50,13 @@ describe('normalizarEstacion', () => {
       latitud: 29.012472,
       longitud: -13.614111,
       precios: { gasolina95: 1.598, gasolina98: null, gasoleo: 1.728 },
+    })
+  })
+
+  it('pone el artículo delante en el municipio y la localidad', () => {
+    expect(normalizarEstacion({ ...estacion, Municipio: 'Oliva (La)', Localidad: 'OLIVA (LA)' })).toMatchObject({
+      municipio: 'La Oliva',
+      localidad: 'LA OLIVA',
     })
   })
 
