@@ -28,7 +28,7 @@ const MARCAS: { claves: string[]; nombre: string; logo: string }[] = [
     nombre: 'Combustibles Canarios',
     logo: 'combustibles-canarios.jpg',
   },
-  // https://www.combustiblesantana.com/ (Tuineje, Fuerteventura)
+  // https://www.combustiblesantana.com/ (Fuerteventura y Gran Canaria)
   { claves: ['SANTANA DOMINGUEZ'], nombre: 'Santana Domínguez', logo: 'santana-dominguez.png' },
   // https://canaryoil.com/ (Tenerife y Gran Canaria)
   { claves: ['CANARY OIL'], nombre: 'Canary Oil', logo: 'canary-oil.png' },
