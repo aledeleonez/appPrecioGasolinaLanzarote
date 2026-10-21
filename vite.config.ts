@@ -39,8 +39,8 @@ function paginasParaGithubPages(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  // GitHub Pages sirve la app bajo /appPrecioGasolinaLanzarote/
-  base: '/appPrecioGasolinaLanzarote/',
+  // GitHub Pages sirve la app bajo /PrecioGasolinaCanarias/
+  base: '/PrecioGasolinaCanarias/',
   plugins: [react(), paginasParaGithubPages()],
   build: {
     // MapLibre ocupa algo más de 1 MB, pero se carga aparte y solo en el mapa
