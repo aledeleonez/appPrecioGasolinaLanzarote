@@ -1,6 +1,6 @@
-# Precio de la Gasolina en Lanzarote
+# Gasolina Canarias
 
-Web que muestra los precios de la gasolina 95, la gasolina 98 y el gasóleo en las gasolineras de Lanzarote, ordenados de más barato a más caro, y un mapa con todas las estaciones.
+Web que muestra los precios de la gasolina 95, la gasolina 98 y el gasóleo en las gasolineras de Lanzarote y Fuerteventura, ordenados de más barato a más caro, y un mapa con todas las estaciones.
 
 **[Ver la web](https://aledeleonez.github.io/appPrecioGasolinaLanzarote/)**
 
@@ -8,8 +8,9 @@ Web que muestra los precios de la gasolina 95, la gasolina 98 y el gasóleo en l
 
 ## Qué puedes hacer
 
-- Ver el ranking de las 47 gasolineras de la isla para cada carburante, con la diferencia de precio respecto a la más barata.
-- Filtrar por municipio y compartir el enlace ya filtrado (por ejemplo, [gasóleo en Tías](https://aledeleonez.github.io/appPrecioGasolinaLanzarote/gasoleo?municipio=tias)).
+- Elegir la isla: Lanzarote (47 gasolineras) o Fuerteventura (27).
+- Ver el ranking de las gasolineras de la isla para cada carburante, con la diferencia de precio respecto a la más barata.
+- Filtrar por municipio y compartir el enlace ya filtrado (por ejemplo, [gasóleo en Tías](https://aledeleonez.github.io/appPrecioGasolinaLanzarote/lanzarote/gasoleo?municipio=tias) o [gasolina 95 en La Oliva](https://aledeleonez.github.io/appPrecioGasolinaLanzarote/fuerteventura?municipio=la-oliva)).
 - Buscar gasolineras en el mapa y ver sus precios al pulsar en ellas.
 - Usarla en el móvil y en modo claro u oscuro.
 
@@ -21,7 +22,9 @@ Web que muestra los precios de la gasolina 95, la gasolina 98 y el gasóleo en l
 
 ## Cómo funciona
 
-Los datos salen de la [API de precios de carburantes](https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/) del Ministerio, que se actualiza cada media hora. Una GitHub Action (`.github/workflows/deploy.yml`) los descarga cada media hora con `scripts/actualizar-datos.ts`, los guarda en un `gasolineras.json` limpio y vuelve a publicar la web, así que el navegador solo descarga ese JSON.
+Los datos salen de la [API de precios de carburantes](https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/) del Ministerio, que se actualiza cada media hora. Una GitHub Action (`.github/workflows/deploy.yml`) los descarga cada media hora con `scripts/actualizar-datos.ts`, los guarda en un JSON limpio por isla (`lanzarote.json`, `fuerteventura.json`) y vuelve a publicar la web, así que el navegador solo descarga el JSON de la isla que estás viendo.
+
+Para añadir otra isla, pon sus municipios en `scripts/minetur.ts` y su nombre y encuadre del mapa en `src/islas.ts`.
 
 ## Tecnologías
 
@@ -34,7 +37,7 @@ Requiere Node 22.22 o superior.
 ```sh
 npm install
 npm run dev       # descarga los datos y arranca el servidor de desarrollo
-npm run datos     # solo actualiza public/data/gasolineras.json
+npm run datos     # solo actualiza los JSON de public/data/
 npm test          # tests con Vitest
 npm run lint      # oxlint
 npm run build     # compila en dist/
