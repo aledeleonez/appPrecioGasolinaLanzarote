@@ -1,4 +1,4 @@
-# Descarga los precios, compila la web y la publica en GitHub Pages.
+# Descarga los precios, compila la web y la publica en Cloudflare.
 # Se ejecuta en cada push a main y cada media hora, que es lo que tarda
 # el Ministerio en actualizar los precios.
 name: Deploy
@@ -15,36 +15,49 @@ permissions:
   pages: write
   id-token: write
 
-# Si se solapan dos ejecuciones, la nueva sustituye a la que estaba en cola
+# Si se solapan dos ejecuciones, la nueva espera a que acabe la anterior
 concurrency:
-  group: pages
+  group: deploy
   cancel-in-progress: false
 
 jobs:
-  build:
+  cloudflare:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version-file: .node-version
           cache: npm
       - run: npm ci
       - run: npm run lint
       - run: npx vitest run
-      - run: npm run datos
+      # prebuild descarga antes los precios (npm run datos)
       - run: npm run build
-      - uses: actions/configure-pages@v6
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: dist
+      - run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-  deploy:
-    needs: build
+  # La dirección antigua de GitHub Pages redirige a la nueva. No cambia con
+  # los precios, así que no hace falta publicarla cada media hora. Espera a
+  # Cloudflare para no redirigir a una web que no se ha podido publicar.
+  redireccion-github-pages:
+    needs: cloudflare
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v7
+      - run: |
+          mkdir -p redireccion
+          cp github-pages/index.html redireccion/index.html
+          cp github-pages/index.html redireccion/404.html
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: redireccion
       - id: deployment
         uses: actions/deploy-pages@v5

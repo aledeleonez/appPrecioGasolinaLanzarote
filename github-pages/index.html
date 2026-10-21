@@ -1,0 +1,29 @@
+<!doctype html>
+<!--
+  La web se publica ahora en Cloudflare. GitHub Pages sirve esta página como
+  index.html y 404.html (ver .github/workflows/deploy.yml), así que cualquier
+  enlace antiguo (/PrecioGasolinaCanarias/tenerife/mapa...) lleva a la misma
+  ruta en la dirección nueva.
+-->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="https://gasolinacanarias.aledeleonez.workers.dev/" />
+    <title>Gasolina Canarias se ha mudado</title>
+    <script>
+      var ruta = location.pathname.replace(/^\/PrecioGasolinaCanarias/, '') || '/'
+      location.replace('https://gasolinacanarias.aledeleonez.workers.dev' + ruta + location.search)
+    </script>
+    <noscript>
+      <meta http-equiv="refresh" content="0; url=https://gasolinacanarias.aledeleonez.workers.dev/" />
+    </noscript>
+  </head>
+  <body>
+    <p>
+      Gasolina Canarias se ha mudado a
+      <a href="https://gasolinacanarias.aledeleonez.workers.dev/">gasolinacanarias.aledeleonez.workers.dev</a>.
+    </p>
+  </body>
+</html>
